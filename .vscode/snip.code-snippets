@@ -1,0 +1,7 @@
+{
+	"Insert snippet": {
+		"scope": "cpp",
+		"prefix": "snip",
+		"body": "/*snippet-begin*/\n$0\n/*snippet-end*/"
+	}
+}
