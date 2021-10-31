@@ -4,9 +4,12 @@
 #include <functional>
 using namespace std;
 
+using ll = long long;
+
 /*snippet-begin*/
-template<class T, class C, class F = less<T>>
+template<class C, class F = less<decltype((*(C*)0)(0, 0))>>
 struct divide_and_conquer_dp {
+    using T = decltype((*(C*)0)(0, 0));
     C c; F f;
 
     // Cost function, value comparator (e.g. less for minimization)
@@ -42,19 +45,27 @@ struct divide_and_conquer_dp {
 
     T operator() (int n, int k) {
         T z = T();
-        run(n, k, [&](int l, vector<T>& g, vector<T>& p) { if (l == k) z = g[n]; });
+        run(n, k, [&](int l, vector<T>& g, vector<int>&) { if (l == k) z = g[n]; });
         return z;
+    }
+
+    vector<vector<T>> matrix(int n, int k) {
+        vector<vector<T>> a(k+1);
+        run(n, k, [&](int l, vector<T>& g, vector<int>&) { a[l] = g; });
+        return a;
     }
 };
 /*snippet-end*/
 
-template<class T, class C, class F = less<T>>
-divide_and_conquer_dp<T, C, F> make_dp(C c, F f = F()) {
-    return divide_and_conquer_dp<T, C, F>(c, f);
+template<class C, class F = less<decltype((*(C*)0)(0, 0))>>
+divide_and_conquer_dp<C, F> make_dp(C c, F f = F()) {
+    return divide_and_conquer_dp<C, F>(c, f);
 }
 
 int main() {
-    auto dp = make_dp<int>([](int x, int y) { return (y-x)*(y-x); });
+    auto dp = make_dp([](int x, int y) { return ll(y-x)*(y-x); });
 
-    return dp(5, 3) != 9;
+    if (dp(999, 10) != 99801) return 1;
+    auto a = dp.matrix(999, 10);
+    return a[10][100] != 1000;
 }
