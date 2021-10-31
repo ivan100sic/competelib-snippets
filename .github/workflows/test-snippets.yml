@@ -15,10 +15,10 @@ jobs:
         ref: main
 
     - name: Add Toolchain repository
-      run: add-apt-repository -y ppa:ubuntu-toolchain-r/test
+      run: sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 
     - name: Install g++-11
-      run: apt install -y g++-11
+      run: sudo apt install -y g++-11
 
     - name: Prepare CMake
       run: mkdir build && cd build && cmake .. -D CMAKE_CXX_COMPILER=g++-11 
