@@ -34,7 +34,7 @@ jobs:
       run: cmake .. -D CMAKE_CXX_COMPILER=g++-11 
       
     - name: Build parent
-      working-directory: ./parent
+      working-directory: ./parent/build
       run: cmake --build .
 
     - name: Run tests
