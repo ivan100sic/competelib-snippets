@@ -2,6 +2,7 @@ name: Test snippets
 
 on:
   pull_request:
+  workflow_dispatch:
 
 jobs:
   test-snippets:
