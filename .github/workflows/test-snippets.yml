@@ -11,27 +11,26 @@ jobs:
     - name: Checkout parent project
       uses: actions/checkout@v2
       with:
-        name: ivan100sic/snippets-cpp
+        repository: ivan100sic/snippets-cpp
         ref: main
 
     - name: Add Toolchain repository
       run: sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 
     - name: Install g++-11
-      run: sudo apt install -y g++-11
+      run: sudo apt-get install -y g++-11
 
     - name: Prepare CMake
-      run: mkdir build && cd build && cmake .. -D CMAKE_CXX_COMPILER=g++-11 
+      run: cd snippets-cpp && mkdir build && cd build && cmake .. -D CMAKE_CXX_COMPILER=g++-11 
       
     - name: Build parent
-      run: cmake --build . && cd ..
+      run: cmake --build . && cd ../..
       
     - name: Checkout this repo
       uses: actions/checkout@v2
 
     - name: Run tests
-      run: ../build/test --compiler-path=g++-11 `find . -name "*.cpp"`
+      run: ./snippets-cpp/build/test --compiler-path=g++-11 `find ./${{ github.repository }} -name "*.cpp"`
       
     - name: Verify snippet syntax
-      run: ../build/generate `find . -name "*.cpp"` --cpp-standard=20 > /dev/null
-
+      run: ./snippets-cpp/build/generate `find ./${{ github.repository }} -name "*.cpp"` --cpp-standard=20 > /dev/null
