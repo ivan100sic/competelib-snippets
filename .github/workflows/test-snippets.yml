@@ -1,0 +1,45 @@
+name: Test snippets
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-snippets:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout parent project
+      uses: actions/checkout@v2
+      with:
+        repository: ivan100sic/snippets-cpp
+        path: parent
+    
+    - name: Checkout this repo
+      uses: actions/checkout@v2
+      with:
+        path: main
+
+    - name: Add Toolchain APT repository
+      run: sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+
+    - name: Install g++-11
+      run: sudo apt-get install -y g++-11
+
+    - name: Prepare CMake build folder
+      working-directory: ./parent
+      run: mkdir build
+      
+    - name: Generate CMake build files
+      working-directory: ./parent/build
+      run: cmake .. -D CMAKE_CXX_COMPILER=g++-11 
+      
+    - name: Build parent
+      working-directory: ./parent/build
+      run: cmake --build .
+
+    - name: Run tests
+      run: ./parent/build/test --compiler-path=g++-11 `find ./main -name "*.cpp"`
+      
+    - name: Verify snippet syntax
+      run: ./parent/build/generate `find ./main -name "*.cpp"` --cpp-standard=20 > /dev/null
