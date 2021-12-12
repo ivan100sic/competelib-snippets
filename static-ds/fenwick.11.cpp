@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <vector>
+#include <limits>
 using namespace std;
 
 /*snippet-begin*/
@@ -20,7 +21,8 @@ struct fenwick {
 
     T operator() (int p) const {
         T v = e;
-        for (; p; p -= p & -p)
+        p = min(p, (int)a.size());
+        for (; p > 0; p -= p & -p)
             v = f(v, a[p-1]);
         return v;
     }
@@ -33,5 +35,10 @@ int main() {
     f.add(3, 10);
     f.add(5, 100);
 
-    return f(4) != 11;
+    if (f(4) != 11) return 1;
+    if (f(5) != 11) return 1;
+    if (f(6) != 111) return 1;
+    if (f(10) != 111) return 1;
+    if (f(numeric_limits<int>::max()) != 111) return 1;
+    if (f(numeric_limits<int>::min()) != 0) return 1;
 }
