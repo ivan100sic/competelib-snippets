@@ -41,5 +41,19 @@ jobs:
     - name: Run tests
       run: ./parent/build/test --compiler-path=g++-11 `find ./main -name "*.cpp"`
       
-    - name: Verify snippet syntax
-      run: ./parent/build/generate `find ./main -name "*.cpp"` --cpp-standard=20 > /dev/null
+    - name: Verify syntax and generate artifacts
+      run: ./parent/build/generate `find ./main -name "*.cpp"` --cpp-standard=20 > vscode-cpp20.code-snippets
+      run: ./parent/build/generate `find ./main -name "*.cpp"` --cpp-standard=17 > vscode-cpp17.code-snippets
+      run: ./parent/build/generate `find ./main -name "*.cpp"` --cpp-standard=14 > vscode-cpp14.code-snippets
+      run: ./parent/build/generate `find ./main -name "*.cpp"` --cpp-standard=11 > vscode-cpp11.code-snippets
+      run: ./parent/build/generate `find ./main -name "*.cpp"` --cpp-standard=3  > vscode-cpp03.code-snippets
+
+    - name: Make pre-release
+      uses: marvinpinto/action-automatic-releases@latest
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Pre-release"
+        files: |
+          *.code-snippets
