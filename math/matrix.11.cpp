@@ -38,8 +38,15 @@ struct matrix {
 
     matrix& operator-= (const matrix& b) {
         for (int i=0; i<n*m; i++)
-            a[i] += b.a[i];
+            a[i] -= b.a[i];
         return *this;
+    }
+
+    matrix operator- () const {
+        matrix b(n, m);
+        for (int i=0; i<n*m; i++)
+            b.a[i] = -a[i];
+        return b;
     }
 
     R* operator[] (int x) { return a.data() + m*x; }
@@ -78,6 +85,8 @@ int main() {
     a[1][1] = 0;
 
     a ^= 10;
+    auto b = -a;
+    b -= -b;
 
-    return a[0][0] != 89;
+    return a[0][0] != 89 || b[0][0] != -178;
 }
