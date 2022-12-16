@@ -4,7 +4,6 @@
 
 /*snippet-begin*/
 // Retired?
-// Retired?
 #include <bits/stdc++.h>
 using namespace std;
 
