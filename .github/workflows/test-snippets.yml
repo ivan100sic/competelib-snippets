@@ -39,7 +39,7 @@ jobs:
       run: cmake --build .
 
     - name: Run tests
-      run: ./parent/build/test --compiler-path=g++-11 `find ./main -name "*.cpp"`
+      run: ./parent/build/test --compiler-path=g++-11 --sources_folder=./main
       
     - name: Verify snippet syntax
-      run: ./parent/build/generate `find ./main -name "*.cpp"` --cpp-standard=20 > /dev/null
+      run: ./parent/build/generate --sources_folder=./main --cpp-standard=20 > /dev/null
