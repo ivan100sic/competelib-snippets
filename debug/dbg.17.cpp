@@ -14,16 +14,22 @@ namespace debug {
     const char green[] = "\x1b[32m";
     const char reset[] = "\x1b[0m";
     const char bold[] = "\x1b[1m";
-
-    template<class T>
+ 
+    template<class T, typename std::enable_if_t<
+        is_arithmetic_v<T> && !is_same_v<T, char>
+        >* = nullptr>
     auto debug(const T& x) -> decltype(cerr << x, 0) {
         return cerr << green << x << reset, 0; 
     }
-
+ 
+    int debug(const char& x) {
+        return cerr << yellow << '\'' << x << '\'' << reset, 0;
+    }
+ 
     int debug(const string& x) {
         return cerr << yellow << '"' << x << '"' << reset, 0;
     }
-
+ 
     template<size_t i, class T>
     int debug_tuple(const T& x) {
         constexpr size_t n = tuple_size<T>::value;
@@ -39,12 +45,12 @@ namespace debug {
         }
         return 0;
     }
-
+ 
     template<class T>
     auto debug(const T& x) -> decltype(debug(get<0>(x))) {
         return debug_tuple<0>(x);
     }
-
+ 
     template<class T>
     auto debug(const T& x) -> decltype(debug(*x.begin())) {
         cerr << '{';
@@ -62,23 +68,33 @@ namespace debug {
             }
         }
     }
-
-    template<class T>
-    void debug(int l, const T& x, const char* n) {
+ 
+    template<class... T>
+    void debug_pack(const T&... x) {
+        int k = sizeof...(T), i = 0;
+        ((debug(x), cerr << ", "+2*(++i >= k)), ...);
+    }
+ 
+    template<class... T>
+    void debug_run(int l, const char* n, const T&... x) {
         cerr << magenta << "Line " << l << ": " << blue << bold << n << reset << " = ";
-        debug(x);
+        debug_pack(x...);
         cerr << '\n';
     }
 }
-
+ 
 #ifdef LOCAL
-    #define dbg(x) (debug::debug(__LINE__, x, #x))
+    #define dbg(...) (debug::debug_run(__LINE__, #__VA_ARGS__, __VA_ARGS__))
 #else
-    #define dbg(x)
+    #define dbg(...)
 #endif
 /*snippet-end*/
 
 int main() {
     vector<string> a = {"abc", "def"};
     dbg(a);
+    dbg("hello");
+    dbg(1.23, 0, 'a');
+    dbg(string_view("hello"));
+    dbg(tuple(1, 2, "abc"));
 }
