@@ -24,7 +24,7 @@ struct treap {
     
     template<class... A>
     int create(A&&... a) {
-        b.emplace_back(forward<A...>(a)...);
+        b.emplace_back(forward<A>(a)...);
         b.back().l = b.back().r = -1;
         b.back().p = re();
         return b.size() - 1;
