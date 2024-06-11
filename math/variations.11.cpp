@@ -1,5 +1,6 @@
 // Variations with repetitions
 #include <vector>
+#include <tuple>
 using namespace std;
 
 /*snippet-begin*/
