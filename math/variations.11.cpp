@@ -1,13 +1,12 @@
-// Binomials
+// Variations with repetitions
 #include <vector>
 using namespace std;
-using mint = int;
 
 /*snippet-begin*/
-template<class T = mint>
+template<class T = int>
 struct variations {
     struct iterator {
-        int l, h;
+        T l, h;
         vector<T> a;
     
         const vector<T>& operator* () const { return a; }
@@ -28,7 +27,7 @@ struct variations {
     variations(int n, int k, T l = 0) : n(n), k(k), l(l) {}
 
     iterator begin() {
-        return {l, l+k-1, vector<int>(n, l)};
+        return {l, l+k-1, vector<T>(n, l)};
     }
 
     iterator end() {
@@ -47,10 +46,10 @@ int main() {
     for (auto it = v.begin(); it != v.end(); ++it){
         auto b = *it;
         for (int i = 0; i < a[ind].size(); ++i){
-            if (b[i] != a[ind][i]) return 0;
+            if (b[i] != a[ind][i]) return 1;
         }
         ++ind;
     }
 
-    return (ind == a.size());
+    return (ind != a.size());
 }
