@@ -194,6 +194,58 @@ struct poly_real {
             x *= scale;
         return rn;
     }
+
+    poly_real derive(){
+        vector<T> b;
+        for (int i = 1; i < size(); ++i){
+            b.push_back(a[i] * i);
+        }
+
+        if (b.empty())
+            return b = {0};
+
+        return poly_real(b);
+    }
+
+    poly_real integrate(){
+        vector<T> b = {0};
+        int n = size();
+        for (int i = 0; i < size(); ++i){
+            b.push_back(a[i]*1.0 / (i+1.0));
+        }
+
+        return {b};
+    }
+
+    void _trim(int n){
+        while (size() > n)
+            a.pop_back();
+    }
+
+    poly_real ex(){
+        poly_real f; f.a = {1};
+        poly_real g; g.a = {1};
+        poly_real t; t.a = {2};
+        int m = 1;
+
+        while (m <= size()/2){
+            g = (g * t - f * g * g);
+            g._trim(m);
+
+            auto q = derive();
+            q._trim(m-1);
+
+
+            auto w = q + g * (f.derive() - f * q);
+            w._trim(2*m-1);
+
+            f = f + f * (*this - w.integrate());
+            f._trim(2*m);
+
+            m *= 2;
+        }
+        return f;
+    }
 };
 /*snippet-end*/
 
