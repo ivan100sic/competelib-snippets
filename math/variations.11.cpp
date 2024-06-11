@@ -44,10 +44,7 @@ int main() {
     int ind = 0;
     vector<vector<int>> a = {{1,1},{1,2},{1,3},{2,1},{2,2},{2,3},{3,1},{3,2},{3,3}};
     for (auto it = v.begin(); it != v.end(); ++it){
-        auto b = *it;
-        for (int i = 0; i < a[ind].size(); ++i){
-            if (b[i] != a[ind][i]) return 1;
-        }
+        if (*it != a[ind]) return 1;
         ++ind;
     }
 
