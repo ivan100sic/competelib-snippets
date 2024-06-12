@@ -264,6 +264,19 @@ struct poly_mint {
         }
         return rn;
     }
+
+    poly_mint derive(){
+        int n = size();
+        poly_mint b(n-1);
+        for (int i = 1; i < n; ++i){
+            b[i-1] = a[i] * i;
+        }
+
+        if (n == 1)
+            return b = {0};
+
+        return b;
+    }
 };
 /*snippet-end*/
 
