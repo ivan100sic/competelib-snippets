@@ -40,7 +40,7 @@ struct variations {
 /*snippet-end*/
 
 int main() {
-    variations v(2,3,1);
+    variations<> v(2,3,1);
 
     int ind = 0;
     vector<vector<int>> a = {{1,1},{1,2},{1,3},{2,1},{2,2},{2,3},{3,1},{3,2},{3,3}};
@@ -49,5 +49,5 @@ int main() {
         ++ind;
     }
 
-    return (ind != a.size());
+    return (ind != (int)a.size());
 }
