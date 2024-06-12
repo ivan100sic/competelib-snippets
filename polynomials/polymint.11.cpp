@@ -327,5 +327,5 @@ int main() {
 
     auto t = a.poly_exp();
 
-    return (t.a != vector<mint>{1,1,3/2,1+1/6}); 
+    return (t.a != vector<mint>{1,1,mint(3)/mint(2),mint(7)/mint(6)}); 
 }
