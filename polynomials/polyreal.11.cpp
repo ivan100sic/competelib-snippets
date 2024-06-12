@@ -196,51 +196,53 @@ struct poly_real {
     }
 
     poly_real derive(){
-        vector<T> b;
-        for (int i = 1; i < size(); ++i){
-            b.push_back(a[i] * i);
+        int n = size();
+        poly_real b(n-1);
+        for (int i = 1; i < n; ++i){
+            b[i-1] = a[i] * i;
         }
 
-        if (b.empty())
+        if (n == 1)
             return b = {0};
 
-        return poly_real(b);
+        return b;
     }
 
     poly_real integrate(){
-        vector<T> b = {0};
         int n = size();
-        for (int i = 0; i < size(); ++i){
-            b.push_back(a[i]*1.0 / (i+1.0));
+        poly_real b(n+1);
+        b[0] = 0;
+        for (int i = 0; i < n; ++i){
+            b[i+1] = (a[i]*1.0 / (i+1.0));
         }
 
-        return {b};
+        return b;
     }
 
-    void _trim(int n){
-        while (size() > n)
-            a.pop_back();
+    void trim(int n){
+        a.resize(n);
     }
 
-    poly_real ex(){
+    // @n=size() - power of two
+    // @a[0] = 0
+    poly_real poly_exp(){
         poly_real f; f.a = {1};
         poly_real g; g.a = {1};
-        poly_real t; t.a = {2};
-        int m = 1;
+        int m = 1, n = size();
 
-        while (m <= size()/2){
-            g = (g * t - f * g * g);
-            g._trim(m);
+        while (m <= n/2){
+            g = (g * 2.0 - f * g * g);
+            g.trim(m);
 
             auto q = derive();
-            q._trim(m-1);
+            q.trim(m-1);
 
 
             auto w = q + g * (f.derive() - f * q);
-            w._trim(2*m-1);
+            w.trim(2*m-1);
 
             f = f + f * (*this - w.integrate());
-            f._trim(2*m);
+            f.trim(2*m);
 
             m *= 2;
         }
@@ -251,8 +253,9 @@ struct poly_real {
 
 int main() {
     poly_real<double> a;
-    a.a = {1, 2, 3};
-    a *= a;
+    a.a = {0,1,1,0};
 
-    return a.a != vector<double> {1, 4, 10, 12, 9};
+    auto t = a.poly_exp();
+
+    return (t.a != vector<double>{1,1,1.5,1+1.0/6.0}); 
 }
