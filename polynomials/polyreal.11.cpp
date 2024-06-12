@@ -220,7 +220,8 @@ struct poly_real {
     }
 
     void trim(int n){
-        a.resize(n);
+        if ((int)a.size() > n)
+            a.resize(n);
     }
 
     // @n=size() - power of two
