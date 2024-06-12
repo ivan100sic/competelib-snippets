@@ -194,13 +194,69 @@ struct poly_real {
             x *= scale;
         return rn;
     }
+
+    poly_real derive(){
+        int n = size();
+        poly_real b(n-1);
+        for (int i = 1; i < n; ++i){
+            b[i-1] = a[i] * i;
+        }
+
+        if (n == 1)
+            return b = {0};
+
+        return b;
+    }
+
+    poly_real integrate(){
+        int n = size();
+        poly_real b(n+1);
+        b[0] = 0;
+        for (int i = 0; i < n; ++i){
+            b[i+1] = (a[i]*1.0 / (i+1.0));
+        }
+
+        return b;
+    }
+
+    void trim(int n){
+        if ((int)a.size() > n)
+            a.resize(n);
+    }
+
+    // @n=size() - power of two
+    // @a[0] = 0
+    poly_real poly_exp(){
+        poly_real f; f.a = {1};
+        poly_real g; g.a = {1};
+        int m = 1, n = size();
+
+        while (m <= n/2){
+            g = (g * 2.0 - f * g * g);
+            g.trim(m);
+
+            auto q = derive();
+            q.trim(m-1);
+
+
+            auto w = q + g * (f.derive() - f * q);
+            w.trim(2*m-1);
+
+            f = f + f * (*this - w.integrate());
+            f.trim(2*m);
+
+            m *= 2;
+        }
+        return f;
+    }
 };
 /*snippet-end*/
 
 int main() {
     poly_real<double> a;
-    a.a = {1, 2, 3};
-    a *= a;
+    a.a = {0,1,1,0};
 
-    return a.a != vector<double> {1, 4, 10, 12, 9};
+    auto t = a.poly_exp();
+
+    return (t.a != vector<double>{1,1,1.5,1+1.0/6.0}); 
 }
