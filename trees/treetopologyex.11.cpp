@@ -100,9 +100,7 @@ struct tree_topology_ex : tree_topology {
 /*snippet-end*/
 
 int main() {
-    tree_topology_ex tt({{0, 1}, {1, 2}, {1, 3}}, 3);
+    tree_topology_ex tt({{0, 1}, {1, 2}, {1, 3}, {2, 4}, {4, 5}, {5, 6}, {3, 7}}, 3);
 
-    cout << tt.kth(2, 3, 1);
-
-    return tt.lca(2, 3) != 1 || tt.distance(2, 3) != 2;
+    return tt.lca(2, 3) != 1 || tt.distance(2, 3) != 2 || tt.kth(6, 7, 3) != 2;
 }
