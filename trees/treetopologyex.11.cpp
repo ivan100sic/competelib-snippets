@@ -90,7 +90,7 @@ struct tree_topology_ex : tree_topology {
 
     int kth(int x, int y, int k) {
         int z = lca(x, y);
-        if (k <= d[x] - d[y]) {
+        if (k <= d[x] - d[z]) {
             return lift(x, k);
         } else {
             return lift(y, d[x] + d[y] - 2*d[z] - k);
@@ -101,6 +101,8 @@ struct tree_topology_ex : tree_topology {
 
 int main() {
     tree_topology_ex tt({{0, 1}, {1, 2}, {1, 3}}, 3);
+
+    cout << tt.kth(2, 3, 1);
 
     return tt.lca(2, 3) != 1 || tt.distance(2, 3) != 2;
 }
