@@ -3,7 +3,7 @@
 #define SNIPPET_ARG(x, y, a) a
 #define BODY                                                        \
     return R::fold_left(                                            \
-        V::zip_transform(times{}, ra(0, 5), ra(10, 20)),            \
+        V::zip_transform(times{}, ra(5), ra(10, 20)),               \
         0, plus{}) != 130;
 
 /*snippet-begin*/
@@ -14,6 +14,7 @@ using namespace std;
 namespace R = ranges;
 namespace V = R::views;
 auto ra(auto x, auto y) { return V::iota(x, y); }
+auto ra(auto x) { return V::iota(decltype(x)0, y); }
 
 using ll = long long;
 using ull = long unsigned long;
