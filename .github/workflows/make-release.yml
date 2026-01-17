@@ -25,8 +25,8 @@ jobs:
     - name: Add Toolchain APT repository
       run: sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 
-    - name: Install g++-11
-      run: sudo apt-get install -y g++-11
+    - name: Install g++-14
+      run: sudo apt-get install -y g++-14
 
     - name: Prepare CMake build folder
       working-directory: ./parent
@@ -34,7 +34,7 @@ jobs:
       
     - name: Generate CMake build files
       working-directory: ./parent/build
-      run: cmake .. -D CMAKE_CXX_COMPILER=g++-11 
+      run: cmake .. -D CMAKE_CXX_COMPILER=g++-14 
       
     - name: Build parent
       working-directory: ./parent/build
@@ -42,6 +42,7 @@ jobs:
 
     - name: Generate artifacts
       run: |
+        ./parent/build/generate --sources-folder=./main --cpp-standard=23 --version-tag=${{ github.ref_name }} > vscode-cpp23.code-snippets
         ./parent/build/generate --sources-folder=./main --cpp-standard=20 --version-tag=${{ github.ref_name }} > vscode-cpp20.code-snippets
         ./parent/build/generate --sources-folder=./main --cpp-standard=17 --version-tag=${{ github.ref_name }} > vscode-cpp17.code-snippets
         ./parent/build/generate --sources-folder=./main --cpp-standard=14 --version-tag=${{ github.ref_name }} > vscode-cpp14.code-snippets
