@@ -23,8 +23,8 @@ jobs:
     - name: Add Toolchain APT repository
       run: sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 
-    - name: Install g++-11
-      run: sudo apt-get install -y g++-11
+    - name: Install g++-14
+      run: sudo apt-get install -y g++-14
 
     - name: Prepare CMake build folder
       working-directory: ./parent
@@ -32,14 +32,14 @@ jobs:
       
     - name: Generate CMake build files
       working-directory: ./parent/build
-      run: cmake .. -D CMAKE_CXX_COMPILER=g++-11 
+      run: cmake .. -D CMAKE_CXX_COMPILER=g++-14 
       
     - name: Build parent
       working-directory: ./parent/build
       run: cmake --build .
 
     - name: Run tests
-      run: ./parent/build/test --compiler-path=g++-11 --sources-folder=./main
+      run: ./parent/build/test --compiler-path=g++-14 --sources-folder=./main
       
     - name: Verify snippet syntax
-      run: ./parent/build/generate --sources-folder=./main --cpp-standard=20 > /dev/null
+      run: ./parent/build/generate --sources-folder=./main --cpp-standard=23 > /dev/null
