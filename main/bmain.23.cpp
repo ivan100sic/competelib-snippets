@@ -14,7 +14,7 @@ using namespace std;
 namespace R = ranges;
 namespace V = R::views;
 auto ra(auto x, auto y) { return V::iota(x, y); }
-auto ra(auto x) { return V::iota((decltype(x)0), x); }
+auto ra(auto x) { return V::iota((decltype(x))0, x); }
 
 using ll = long long;
 using ull = long unsigned long;
