@@ -1,21 +1,35 @@
 // Xor basis
 
-using ll = long long;
+#include <cstdint>
+#include <type_traits>
 
 /*snippet-begin*/
 template<int B = 60>
 struct xorbasis {
-    ll b[B];
+    static_assert(B >= 1 && B <= 64, "B must be between 1 and 64");
+
+    using T = typename std::conditional<B <= 8, uint8_t,
+        typename std::conditional<B <= 16, uint16_t,
+            typename std::conditional<B <= 32, uint32_t, uint64_t>::type>::type>::type;
+
+    using cnt_t = typename std::conditional<B == 64, __uint128_t, uint64_t>::type;
+
+    static constexpr T max_span() {
+        return (T(1) << (B - 1)) | ((T(1) << (B - 1)) - T(1));
+    }
+
+    T b[B];
     int sz;
 
     xorbasis() : sz(0) {
         for (int i=0; i<B; i++)
-            b[i] = 0;
+            b[i] = T(0);
     }
 
-    bool add(ll x) {
+    bool add(T x) {
+        x &= max_span();
         for (int i=B-1; i>=0; i--) {
-            if (!(x >> i & 1)) continue;
+            if (!((x >> i) & 1)) continue;
             if (!b[i]) {
                 b[i] = x;
                 sz++;
@@ -26,58 +40,58 @@ struct xorbasis {
         return false;
     }
 
-    ll max_xor(ll x = 0) const {
+    T max_xor(T x = T(0)) const {
         for (int i=B-1; i>=0; i--)
-            if (b[i] && !(x >> i & 1))
+            if (b[i] && !((x >> i) & 1))
                 x ^= b[i];
         return x;
     }
 
-    ll min_xor(ll x = 0) const {
+    T min_xor(T x = T(0)) const {
         for (int i=B-1; i>=0; i--)
-            if (b[i] && (x >> i & 1))
+            if (b[i] && ((x >> i) & 1))
                 x ^= b[i];
         return x;
     }
 
-    bool contains(ll x) const {
-        return min_xor(x) == 0;
+    bool contains(T x) const {
+        return min_xor(x) == T(0);
     }
 
-    ll kth(ll k) const {
-        if (k < 1 || k > (1LL << sz)) return -1;
-        ll x = 0;
-        ll cnt = 1LL << sz;
+    T kth(cnt_t k) const {
+        if (k < 1 || k > ((cnt_t)1 << sz)) return T(-1);
+        T x = T(0);
+        cnt_t cnt = (cnt_t)1 << sz;
         for (int i=B-1; i>=0; i--) {
             if (!b[i]) continue;
             if (k > cnt / 2) {
-                if (!(x >> i & 1)) x ^= b[i];
+                if (!((x >> i) & 1)) x ^= b[i];
                 k -= cnt / 2;
             } else {
-                if (x >> i & 1) x ^= b[i];
+                if ((x >> i) & 1) x ^= b[i];
             }
             cnt /= 2;
         }
         return x;
     }
 
-    ll count_lt(ll x) const {
-        if (x < 0) return 0;
-        if (x >> B) return 1LL << sz;
-        ll ret = 0, cnt = 1LL << sz;
-        ll mask = 0;
+    cnt_t count_lt(T x) const {
+        if (x > max_span())
+            return (cnt_t)1 << sz;
+        cnt_t ret = 0, cnt = (cnt_t)1 << sz;
+        T mask = T(0);
         for (int i=B-1; i>=0; i--) {
             if (b[i]) {
-                if (x >> i & 1) {
+                if ((x >> i) & 1) {
                     ret += cnt / 2;
-                    if (!(mask >> i & 1)) mask ^= b[i];
+                    if (!((mask >> i) & 1)) mask ^= b[i];
                 } else {
-                    if (mask >> i & 1) mask ^= b[i];
+                    if ((mask >> i) & 1) mask ^= b[i];
                 }
                 cnt /= 2;
             } else {
-                if ((x ^ mask) >> i & 1) {
-                    if (x >> i & 1) return ret + cnt;
+                if (((x ^ mask) >> i) & 1) {
+                    if ((x >> i) & 1) return ret + cnt;
                     else return ret;
                 }
             }
@@ -85,8 +99,8 @@ struct xorbasis {
         return ret;
     }
 
-    ll count_le(ll x) const {
-        return count_lt(x) + (min_xor(x) == 0);
+    cnt_t count_le(T x) const {
+        return count_lt(x) + (min_xor(x) == T(0));
     }
 };
 /*snippet-end*/
@@ -102,7 +116,7 @@ int main() {
     if (b.kth(2) != 1) return 1;
     if (b.kth(3) != 2) return 1;
     if (b.kth(4) != 3) return 1;
-    if (b.kth(5) != -1) return 1;
+    if (b.kth(5) != xorbasis<>::T(-1)) return 1;
     if (b.count_lt(2) != 2) return 1;
     if (b.count_le(2) != 3) return 1;
     if (!b.contains(3)) return 1;
