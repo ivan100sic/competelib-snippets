@@ -52,7 +52,8 @@ int main() {
     euler_tour et2(2);
     et2.add_edge(0, 0);
     et2.add_edge(0, 1);
-    if (et2(0).size() != 2) return 1;
+    et2.add_edge(0, 1);
+    if (et2(0).size() != 3) return 1;
 
     euler_tour et3(3);
     et3.add_edge(0, 1);
