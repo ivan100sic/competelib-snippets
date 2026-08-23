@@ -12,9 +12,15 @@ struct euler_tour {
     euler_tour(int n) : e(n) {}
     void add_edge(int x, int y) {
         int i = f.size();
-        e[x].push_back(i);
-        e[y].push_back(i);
-        f.push_back({--e[x].end(), --e[y].end(), x, y});
+        if (x == y) {
+            e[x].push_back(i);
+            auto it = --e[x].end();
+            f.push_back({it, it, x, y});
+        } else {
+            e[x].push_back(i);
+            e[y].push_back(i);
+            f.push_back({--e[x].end(), --e[y].end(), x, y});
+        }
     }
 
     list<int> dfs(int x) {
@@ -24,7 +30,8 @@ struct euler_tour {
             q.push_back(x);
             x ^= l.u ^ l.v;
             e[l.u].erase(l.p);
-            e[l.v].erase(l.q);
+            if (l.u != l.v)
+                e[l.v].erase(l.q);
         }
         for (auto it = q.begin(); it != q.end(); ++it) q.splice(it, dfs(*it));
         return q;
@@ -38,10 +45,19 @@ struct euler_tour {
 /*snippet-end*/
 
 int main() {
-    euler_tour et(3);
-    et.add_edge(0, 1);
-    et.add_edge(1, 2);
-    et.add_edge(2, 0);
+    euler_tour et1(1);
+    et1.add_edge(0, 0);
+    if (et1(0).size() != 1) return 1;
 
-    return et(0).size() != 3;
+    euler_tour et2(2);
+    et2.add_edge(0, 0);
+    et2.add_edge(0, 1);
+    et2.add_edge(0, 1);
+    if (et2(0).size() != 3) return 1;
+
+    euler_tour et3(3);
+    et3.add_edge(0, 1);
+    et3.add_edge(1, 2);
+    et3.add_edge(2, 0);
+    if (et3(0).size() != 3) return 1;
 }
